@@ -1,9 +1,4 @@
-# Python virtual environment
-venv/
-env/
-.env
-
-# Python cache files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -13,11 +8,21 @@ dist/
 build/
 *.egg-info/
 
-# IDE specific files
+# Virtual environment
+venv/
+env/
+.env
+
+# IDE
 .idea/
 .vscode/
 *.swp
 *.swo
+
+# Project specific
+data/uploads/
+data/chroma/
+*.log
 
 # OS specific files
 .DS_Store

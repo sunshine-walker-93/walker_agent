@@ -3,6 +3,7 @@ import chromadb
 from chromadb.config import Settings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import OllamaEmbeddings
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders import (
     TextLoader,
@@ -12,11 +13,14 @@ from langchain_community.document_loaders import (
 )
 import os
 from datetime import datetime
+from langchain_ollama import OllamaEmbeddings, ChatOllama
+from langchain_chroma import Chroma
 
 class KnowledgeBase:
-    def __init__(self, persist_directory: str = "data/chroma"):
+    def __init__(self, persist_directory: str = "data/chroma", model_type: str = "ollama"):
         self.persist_directory = persist_directory
-        self.embeddings = OpenAIEmbeddings()
+        self.model_type = model_type
+        self._initialize_embeddings()
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,
             chunk_overlap=200,
@@ -24,6 +28,20 @@ class KnowledgeBase:
             separators=["\n\n", "\n", "。", "！", "？", ".", "!", "?", " ", ""]
         )
         self.vector_store = None
+        self._initialize_vector_store()
+    
+    def _initialize_embeddings(self):
+        """初始化 embeddings 模型"""
+        if self.model_type == "ollama":
+            self.embeddings = OllamaEmbeddings(model="nomic-embed-text:latest")
+        else:  # api mode
+            self.embeddings = OpenAIEmbeddings()  # 使用 OpenAI 的 embeddings 作为替代
+    
+    def switch_model(self, model_type: str):
+        """切换 embeddings 模型类型"""
+        self.model_type = model_type
+        self._initialize_embeddings()
+        # 重新初始化向量存储以使用新的 embeddings
         self._initialize_vector_store()
     
     def _initialize_vector_store(self):
@@ -76,7 +94,6 @@ class KnowledgeBase:
             
             # 添加到向量存储
             self.vector_store.add_documents(texts)
-            self.vector_store.persist()
             
             return {
                 "success": True,
@@ -105,7 +122,6 @@ class KnowledgeBase:
             
             # 添加到向量存储
             self.vector_store.add_texts(texts, metadatas=[metadata] * len(texts))
-            self.vector_store.persist()
             
             return {
                 "success": True,

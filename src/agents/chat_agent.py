@@ -1,4 +1,5 @@
 from typing import List, Optional, Dict, Any
+from langchain_community.chat_models import ChatOllama
 from langchain_openai import ChatOpenAI
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -6,27 +7,52 @@ from langchain.memory import ConversationBufferMemory
 from langchain_core.tools import BaseTool
 from langchain_core.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 import json
+import os
 
 class ChatAgent:
     def __init__(
         self,
         tools: List[BaseTool],
-        model_name: str = "gpt-3.5-turbo",
+        model_type: str = "ollama",  # "ollama" 或 "api"
+        model_name: str = "deepseek-r1:14b",
         temperature: float = 0.7
     ):
-        self.llm = ChatOpenAI(
-            model=model_name,
-            temperature=temperature,
-            streaming=True,
-            callbacks=[StreamingStdOutCallbackHandler()]
-        )
+        self.model_type = model_type
+        self.model_name = model_name
+        self.temperature = temperature
         self.tools = tools
         self.memory = ConversationBufferMemory(
             memory_key="chat_history",
             return_messages=True,
             output_key="output"
         )
+        self._initialize_llm()
         self._initialize_agent()
+    
+    def _initialize_llm(self):
+        """初始化语言模型"""
+        if self.model_type == "ollama":
+            self.llm = ChatOllama(
+                model=self.model_name,
+                temperature=self.temperature,
+                streaming=True,
+                callbacks=[StreamingStdOutCallbackHandler()]
+            )
+        else:  # api mode
+            self.llm = ChatOpenAI(
+                model=self.model_name,
+                temperature=self.temperature,
+                streaming=True,
+                callbacks=[StreamingStdOutCallbackHandler()]
+            )
+    
+    def switch_model(self, model_type: str, model_name: Optional[str] = None):
+        """切换模型类型和名称"""
+        self.model_type = model_type
+        if model_name:
+            self.model_name = model_name
+        self._initialize_llm()
+        self._initialize_agent()  # 重新初始化 agent 以使用新的模型
     
     def _initialize_agent(self):
         """初始化 Agent"""
@@ -80,16 +106,31 @@ class ChatAgent:
     def chat(self, message: str) -> Dict[str, Any]:
         """与 Agent 对话"""
         try:
+            print(f"开始处理消息: {message}")  # 调试日志
             response = self.agent_executor.invoke({"input": message})
+            print(f"Agent 响应: {response}")  # 调试日志
+            
+            # 格式化工具调用过程
+            formatted_steps = []
+            for step in response.get("intermediate_steps", []):
+                formatted_steps.append({
+                    "tool": step[0].tool,
+                    "tool_input": step[0].tool_input,
+                    "output": step[1]
+                })
+            
             return {
                 "success": True,
                 "output": response["output"],
-                "intermediate_steps": response.get("intermediate_steps", [])
+                "intermediate_steps": formatted_steps
             }
         except Exception as e:
+            import traceback
+            error_msg = f"错误类型: {type(e).__name__}\n错误信息: {str(e)}\n{traceback.format_exc()}"
+            print(f"发生错误: {error_msg}")  # 调试日志
             return {
                 "success": False,
-                "error": str(e),
+                "error": error_msg,
                 "output": "抱歉，处理您的问题时出现了错误。请稍后重试。"
             }
     

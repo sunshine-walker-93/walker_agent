@@ -118,12 +118,7 @@ class HTTPRequestTool(BaseTool):
     - data: 请求体数据（可选）
     - json: JSON 格式的请求体数据（可选）
     示例输入：
-    {
-        "url": "https://api.example.com/data",
-        "method": "GET",
-        "headers": {"Authorization": "Bearer token"},
-        "params": {"key": "value"}
-    }"""
+    {{"url": "https://api.example.com/data", "method": "GET", "headers": {{"Authorization": "Bearer token"}}, "params": {{"key": "value"}}}}"""
     
     def _run(self, request_config: str) -> str:
         """执行 HTTP 请求"""
