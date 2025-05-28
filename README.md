@@ -125,6 +125,5 @@ walker_agent/
 
 [添加许可证信息] 
 
+
 git remote add origin git@github.com:sunshine-walker-93/walker_agent.git
-git branch -M main
-git push -u origin main
