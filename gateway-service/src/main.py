@@ -24,13 +24,14 @@ SERVICE_ROUTES: Dict[str, str] = {
     "auth": "http://localhost:8101",
     "user": "http://localhost:8102",
     "agent": "http://localhost:8103",
-    "knowledge": "http://localhost:8104"
+    "knowledge": "http://localhost:8104",
+    "frontend": "http://localhost:8105"
 }
 
 @app.middleware("http")
 async def route_middleware(request: Request, call_next):
     path = request.url.path
-    service = path.split("/")[1]
+    service = path.split("/")[1] if len(path.split("/")) > 1 else "frontend"
     
     if service in SERVICE_ROUTES:
         target_url = f"{SERVICE_ROUTES[service]}{path}"
@@ -55,6 +56,11 @@ async def route_middleware(request: Request, call_next):
 async def health_check():
     """健康检查端点"""
     return {"status": "healthy"}
+
+@app.get("/")
+async def root():
+    """根路径重定向到API文档"""
+    return {"message": "Welcome to the API Gateway", "docs_url": "/docs"}
 
 if __name__ == "__main__":
     import uvicorn

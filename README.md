@@ -14,130 +14,175 @@
 
 ## 技术栈
 
-- 后端：FastAPI
-- 前端：HTML, Tailwind CSS, JavaScript
-- 数据库：内存存储（可扩展为持久化存储）
-- 认证：JWT
-- 实时通信：WebSocket
-- AI：LangChain, OpenAI
+### 后端
+- FastAPI (微服务架构)
+- MySQL 数据库
+- JWT 认证
+- WebSocket 实时通信
+- LangChain + OpenAI AI 集成
 
-## 安装
+### 前端
+- Vue 3 + TypeScript
+- Vite 构建工具
+- Pinia 状态管理
+- Vue Router 路由管理
+- Element Plus UI 框架
+- Axios HTTP 客户端
 
+## 系统架构
+
+系统采用微服务架构，包含以下服务：
+
+- 网关服务 (8100): API 网关，路由请求到各个微服务
+- 认证服务 (8101): 用户认证和授权
+- 用户服务 (8102): 用户管理
+- 智能助手服务 (8103): 智能对话和任务处理
+- 知识库服务 (8104): 知识库管理和检索
+- 前端服务 (8105): Vue.js 单页应用
+
+## 开发环境设置
+
+### 前置要求
+1. Python 3.9+
+2. Node.js 16+
+3. MySQL 8.0+
+
+### 安装 MySQL
+- macOS:
+  ```bash
+  brew install mysql
+  ```
+- Ubuntu:
+  ```bash
+  sudo apt-get install mysql-server
+  ```
+- Windows:
+  从 [MySQL 官网](https://dev.mysql.com/downloads/mysql/) 下载安装包
+
+### 安装 Node.js
+- macOS:
+  ```bash
+  brew install node
+  ```
+- Ubuntu:
+  ```bash
+  curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  ```
+- Windows:
+  从 [Node.js 官网](https://nodejs.org/) 下载安装包
+
+### 克隆和设置项目
 1. 克隆仓库：
 ```bash
 git clone <repository-url>
 cd <repository-name>
 ```
 
-2. 创建虚拟环境：
+2. 设置后端服务：
 ```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
+# 为每个服务创建虚拟环境
+for service in gateway-service auth-service user-service agent-service knowledge-service; do
+  cd $service
+  python -m venv venv
+  source venv/bin/activate
+  pip install -r requirements.txt
+  cd ..
+done
 ```
 
-3. 安装依赖：
+3. 设置前端服务：
 ```bash
-pip install -r requirements.txt
+cd frontend-service
+npm install
 ```
 
-4. 配置环境变量：
-创建 `.env` 文件并添加以下配置：
-```
-OPENAI_API_KEY=your-api-key
-SECRET_KEY=your-secret-key
-```
+### 配置环境变量
+1. 后端服务配置：
+   - 在每个服务目录下创建 `.env` 文件
+   - 配置必要的环境变量（数据库连接、密钥等）
 
-## 运行
+2. 前端服务配置：
+   - 在 `frontend-service` 目录下创建 `.env` 文件
+   - 配置 API 地址等环境变量
 
-1. 启动服务器：
+### 启动服务
+运行启动脚本：
 ```bash
-python src/app.py
+./start_services.sh
 ```
 
-2. 访问系统：
-打开浏览器访问 `http://localhost:8000`
+这将启动所有服务：
+- 网关服务: http://localhost:8100
+- 认证服务: http://localhost:8101
+- 用户服务: http://localhost:8102
+- 智能助手服务: http://localhost:8103
+- 知识库服务: http://localhost:8104
+- 前端服务: http://localhost:8105
 
-## 使用指南
-
-### 注册和登录
-
-1. 访问登录页面
-2. 点击"注册"创建新账号
-3. 填写必要信息并提交
-4. 使用注册的账号登录系统
-
-### 个人信息管理
-
-1. 在侧边栏点击"个人信息"
-2. 查看和编辑个人资料
-3. 修改密码
-4. 更新邮箱和姓名
-
-### 智能助手
-
-1. 在侧边栏点击"智能助手"
-2. 在输入框中输入问题或消息
-3. 等待助手回复
-4. 可以继续对话或开始新的话题
-
-### 系统设置
-
-1. 在侧边栏点击"系统设置"
-2. 配置通知偏好
-3. 选择界面主题
-4. 设置语言
-5. 管理隐私选项
-
-## API文档
-
-启动服务器后，访问 `http://localhost:8000/docs` 查看完整的API文档。
-
-### 主要API端点
-
-- POST `/token` - 获取访问令牌
-- POST `/api/auth/register` - 注册新用户
-- GET `/api/user/profile` - 获取用户信息
-- PUT `/api/user/profile` - 更新用户信息
-- PUT `/api/user/password` - 修改密码
-- GET `/api/user/settings` - 获取用户设置
-- PUT `/api/user/settings` - 更新用户设置
-- DELETE `/api/user/data` - 清除用户数据
-- DELETE `/api/user/account` - 删除用户账号
-- WebSocket `/ws/{client_id}` - 实时通信
+### 停止服务
+运行停止脚本：
+```bash
+./stop_services.sh
+```
 
 ## 开发指南
 
-### 项目结构
-
-```
-.
-├── src/
-│   ├── agents/         # 智能代理
-│   ├── core/          # 核心功能
-│   ├── static/        # 静态文件
-│   └── app.py         # 主应用
-├── data/              # 数据存储
-├── requirements.txt   # 依赖列表
-└── README.md         # 项目文档
-```
-
-### 添加新功能
-
-1. 创建新的代理：
-   - 在 `src/agents/` 目录下创建新的代理类
-   - 继承 `BaseAgent` 类
-   - 实现必要的方法
+### 后端开发
+1. 添加新的服务：
+   - 创建新的服务目录
+   - 创建虚拟环境
+   - 添加 requirements.txt
+   - 在 start_services.sh 中添加启动命令
 
 2. 添加新的API端点：
-   - 在 `src/app.py` 中添加新的路由
+   - 在对应服务的 `src/main.py` 中添加新的路由
    - 实现相应的处理函数
    - 更新API文档
 
-3. 修改前端界面：
-   - 在 `src/static/` 目录下修改或添加HTML文件
-   - 更新JavaScript代码
-   - 调整样式
+### 前端开发
+1. 开发模式：
+```bash
+cd frontend-service
+npm run dev
+```
+
+2. 构建生产版本：
+```bash
+cd frontend-service
+npm run build
+```
+
+3. 添加新功能：
+   - 创建新的 Vue 组件
+   - 添加新的路由
+   - 创建新的 API 调用
+   - 更新状态管理
+
+4. 目录结构：
+```
+frontend-service/
+├── src/
+│   ├── api/          # API 调用
+│   ├── components/   # Vue 组件
+│   ├── router/       # 路由配置
+│   ├── stores/       # Pinia 状态管理
+│   ├── types/        # TypeScript 类型定义
+│   ├── views/        # 页面组件
+│   ├── App.vue       # 根组件
+│   └── main.ts       # 入口文件
+├── public/           # 静态资源
+└── package.json      # 项目配置
+```
+
+## API文档
+
+启动服务后，访问以下地址查看API文档：
+- 网关服务: http://localhost:8100/docs
+- 认证服务: http://localhost:8101/docs
+- 用户服务: http://localhost:8102/docs
+- 智能助手服务: http://localhost:8103/docs
+- 知识库服务: http://localhost:8104/docs
 
 ## 贡献
 
@@ -152,75 +197,3 @@ python src/app.py
 ## 许可证
 
 MIT License
-
-## 本地开发环境设置
-
-### 前置要求
-1. Python 3.9+
-2. PostgreSQL 13+
-
-### 安装 PostgreSQL
-- macOS:
-  ```bash
-  brew install postgresql
-  ```
-- Ubuntu:
-  ```bash
-  sudo apt-get install postgresql
-  ```
-- Windows:
-  从 [PostgreSQL 官网](https://www.postgresql.org/download/windows/) 下载安装包
-
-### 启动服务
-1. 确保 PostgreSQL 已安装并运行
-2. 运行启动脚本：
-   ```bash
-   ./start_services.sh
-   ```
-   这将启动所有服务：
-   - 网关服务 (http://localhost:8100)
-   - 认证服务 (http://localhost:8101)
-   - 用户服务 (http://localhost:8102)
-   - 智能助手服务 (http://localhost:8103)
-   - 知识库服务 (http://localhost:8104)
-
-### 停止服务
-运行停止脚本：
-```bash
-./stop_services.sh
-```
-
-## 服务说明
-
-### 网关服务
-- 端口：8100
-- 功能：API 网关，路由请求到各个微服务
-
-### 认证服务
-- 端口：8101
-- 功能：用户认证和授权
-
-### 用户服务
-- 端口：8102
-- 功能：用户管理
-
-### 智能助手服务
-- 端口：8103
-- 功能：智能对话和任务处理
-
-### 知识库服务
-- 端口：8104
-- 功能：知识库管理和检索
-
-## 开发指南
-
-### 添加新服务
-1. 创建新的服务目录
-2. 创建虚拟环境：`python -m venv venv`
-3. 添加 requirements.txt
-4. 在 start_services.sh 中添加启动命令
-
-### 修改服务
-1. 激活对应服务的虚拟环境：`source venv/bin/activate`
-2. 修改代码
-3. 重启服务：`pkill -f "uvicorn src.main:app" && uvicorn src.main:app --host 0.0.0.0 --port <端口号>`

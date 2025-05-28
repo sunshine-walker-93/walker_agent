@@ -53,9 +53,18 @@ pip install -r requirements.txt
 uvicorn src.main:app --host 0.0.0.0 --port 8100 &
 cd ..
 
+# 启动前端服务
+cd frontend-service
+# 确保没有遗留的 Node.js 进程
+pkill -f "node.*vite" || true
+npm install
+npm run dev &
+cd ..
+
 echo "所有服务已启动"
 echo "网关服务: http://localhost:8100"
 echo "认证服务: http://localhost:8101"
 echo "用户服务: http://localhost:8102"
 echo "智能助手服务: http://localhost:8103"
-echo "知识库服务: http://localhost:8104" 
+echo "知识库服务: http://localhost:8104"
+echo "前端服务: http://localhost:8105" 

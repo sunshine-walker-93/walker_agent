@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 个人信息管理系统{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white shadow-lg rounded-lg p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">欢迎使用个人信息管理系统</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-blue-50 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold text-blue-800 mb-4">智能助手</h2>
+                <p class="text-gray-600 mb-4">与AI助手进行智能对话，获取帮助和建议。</p>
+                <a href="/chat" class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">开始对话</a>
+            </div>
+            
+            <div class="bg-green-50 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold text-green-800 mb-4">个人信息管理</h2>
+                <p class="text-gray-600 mb-4">管理您的个人资料、设置和偏好。</p>
+                <a href="/profile" class="inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">查看资料</a>
+            </div>
+            
+            <div class="bg-purple-50 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold text-purple-800 mb-4">系统设置</h2>
+                <p class="text-gray-600 mb-4">自定义系统设置，包括通知、主题和语言。</p>
+                <a href="/settings" class="inline-block bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">系统设置</a>
+            </div>
+            
+            <div class="bg-yellow-50 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold text-yellow-800 mb-4">知识库</h2>
+                <p class="text-gray-600 mb-4">访问和管理您的个人知识库。</p>
+                <a href="/knowledge" class="inline-block bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">浏览知识库</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
