@@ -77,7 +77,9 @@ class ChatAgent:
 2. 回答要简洁明了
 3. 如果使用了工具，要解释工具的结果
 4. 如果无法回答，要诚实地说明
-5. 保持礼貌和专业的语气"""
+5. 保持礼貌和专业的语气
+6. 不要使用任何特殊标签（如 <think> 或 </think>），直接输出思考过程和结果
+7. 思考过程会自动被系统格式化显示，你只需要专注于内容本身"""
 
         prompt = ChatPromptTemplate.from_messages([
             ("system", system_prompt.format(

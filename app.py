@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from src.tools.base_tools import get_tools
 from src.knowledge_base.vector_store import KnowledgeBase
 from src.agents.chat_agent import ChatAgent
+from src.utils.styles import THINKING_STYLES
 import json
 from datetime import datetime
 
@@ -137,38 +138,25 @@ for message in st.session_state.messages:
             # 显示工具调用过程
             if "intermediate_steps" in message:
                 with st.expander("查看思考过程", expanded=False):
+                    # 应用样式
+                    st.markdown(THINKING_STYLES, unsafe_allow_html=True)
+                    
                     for step in message["intermediate_steps"]:
-                        # 使用不同的背景色和样式显示思考过程
-                        st.markdown("""
-                        <style>
-                        .thinking-box {
-                            background-color: #f0f2f6;
-                            padding: 1rem;
-                            border-radius: 0.5rem;
-                            margin: 1rem 0;
-                        }
-                        .result-box {
-                            background-color: #e6f3ff;
-                            padding: 1rem;
-                            border-radius: 0.5rem;
-                            margin: 1rem 0;
-                        }
-                        </style>
-                        """, unsafe_allow_html=True)
-                        
                         # 思考过程
                         st.markdown('<div class="thinking-box">', unsafe_allow_html=True)
-                        st.markdown("#### 🤔 思考过程")
+                        st.markdown('<div class="thinking-title">🤔 思考过程</div>', unsafe_allow_html=True)
+                        st.markdown('<div class="thinking-content">', unsafe_allow_html=True)
                         st.markdown(f"**使用的工具**: `{step['tool']}`")
                         st.markdown(f"**工具输入**:")
                         st.code(step['tool_input'], language="text")
-                        st.markdown('</div>', unsafe_allow_html=True)
+                        st.markdown('</div></div>', unsafe_allow_html=True)
                         
                         # 执行结果
                         st.markdown('<div class="result-box">', unsafe_allow_html=True)
-                        st.markdown("#### ✨ 执行结果")
+                        st.markdown('<div class="result-title">✨ 执行结果</div>', unsafe_allow_html=True)
+                        st.markdown('<div class="result-content">', unsafe_allow_html=True)
                         st.code(step['output'], language="text")
-                        st.markdown('</div>', unsafe_allow_html=True)
+                        st.markdown('</div></div>', unsafe_allow_html=True)
                         
                         st.markdown("---")
 
