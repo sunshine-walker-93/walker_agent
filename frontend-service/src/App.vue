@@ -3,7 +3,7 @@
     <div class="app-container">
       <el-container>
         <el-header>
-          <nav-bar />
+          <NavBar v-if="isAuthenticated" />
         </el-header>
         <el-main>
           <router-view v-slot="{ Component }">
@@ -13,7 +13,7 @@
           </router-view>
         </el-main>
         <el-footer>
-          <footer-bar />
+          <FooterBar v-if="isAuthenticated" />
         </el-footer>
       </el-container>
     </div>
@@ -23,8 +23,13 @@
 <script setup lang="ts">
 import { ElConfigProvider } from 'element-plus'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import { computed } from 'vue'
+import { useUserStore } from '@/stores/user'
 import NavBar from '@/components/NavBar.vue'
 import FooterBar from '@/components/FooterBar.vue'
+
+const userStore = useUserStore()
+const isAuthenticated = computed(() => userStore.isAuthenticated)
 </script>
 
 <style lang="scss">

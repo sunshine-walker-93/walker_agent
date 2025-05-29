@@ -1,38 +1,33 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { User } from '@/types'
-import { login as loginApi, logout as logoutApi, getUserInfo } from '@/api/auth'
 
 export const useUserStore = defineStore('user', () => {
-  const token = ref<string>('')
-  const userInfo = ref<User | null>(null)
+  const token = ref(localStorage.getItem('token') || '')
+  const user = ref(null)
 
-  const isLoggedIn = computed(() => !!token.value)
-  const avatar = computed(() => userInfo.value?.avatar)
+  const isAuthenticated = computed(() => !!token.value)
 
-  async function login(username: string, password: string) {
-    const { access_token } = await loginApi(username, password)
-    token.value = access_token
-    await fetchUserInfo()
+  function setToken(newToken: string) {
+    token.value = newToken
+    localStorage.setItem('token', newToken)
   }
 
-  async function logout() {
-    await logoutApi()
+  function setUser(userData: any) {
+    user.value = userData
+  }
+
+  function clearUser() {
     token.value = ''
-    userInfo.value = null
-  }
-
-  async function fetchUserInfo() {
-    userInfo.value = await getUserInfo()
+    user.value = null
+    localStorage.removeItem('token')
   }
 
   return {
     token,
-    userInfo,
-    isLoggedIn,
-    avatar,
-    login,
-    logout,
-    fetchUserInfo
+    user,
+    isAuthenticated,
+    setToken,
+    setUser,
+    clearUser
   }
 }) 
